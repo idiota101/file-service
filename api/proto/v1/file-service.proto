@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package v1;
+
+
+
+service FileService {
+    rpc RegisterUser( RegisterUserRequest) returns (RegisterUserResponse){};
+    rpc UploadFile(stream Chunk) returns (UploadStatus) {};
+ 
+    rpc DownloadFile(GetFileRequest) returns (stream Chunk){};
+}
+
+message UserDetails{
+    string name=1;
+    string email=2;
+    string password=3;
+
+}
+
+message RegisterUserRequest{
+    UserDetails userDetails=1;
+}
+
+message RegisterUserResponse{
+    string message=1;
+}
+
+
+message Chunk {
+    bytes Content = 1;
+}
+
+enum UploadStatusCode {
+Unknown = 0;
+Ok = 1;
+Failed = 2;
+}
+
+
+message UploadStatus {
+string message = 1;
+UploadStatusCode code = 2;
+}
+
+
+message GetFileRequest{
+string name=1;
+}
+
+
+
+// protoc proto/pdf.proto --go_out=plugins=grpc:.
+
+
+
+
+
