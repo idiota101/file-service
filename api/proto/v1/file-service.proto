@@ -3,11 +3,14 @@ syntax = "proto3";
 package v1;
 
 
-
 service FileService {
+    //simple RPC
     rpc RegisterUser( RegisterUserRequest) returns (RegisterUserResponse){};
+
+    // client side straming RPC
     rpc UploadFile(stream Chunk) returns (UploadStatus) {};
- 
+
+    // server side streaming RPC
     rpc DownloadFile(GetFileRequest) returns (stream Chunk){};
 }
 

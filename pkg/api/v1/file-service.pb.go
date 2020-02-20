@@ -361,8 +361,11 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type FileServiceClient interface {
+	//simple RPC
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
+	// client side straming RPC
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (FileService_UploadFileClient, error)
+	// server side streaming RPC
 	DownloadFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (FileService_DownloadFileClient, error)
 }
 
@@ -451,8 +454,11 @@ func (x *fileServiceDownloadFileClient) Recv() (*Chunk, error) {
 
 // FileServiceServer is the server API for FileService service.
 type FileServiceServer interface {
+	//simple RPC
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
+	// client side straming RPC
 	UploadFile(FileService_UploadFileServer) error
+	// server side streaming RPC
 	DownloadFile(*GetFileRequest, FileService_DownloadFileServer) error
 }
 
