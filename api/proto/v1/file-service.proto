@@ -8,10 +8,10 @@ service FileService {
     rpc RegisterUser( RegisterUserRequest) returns (RegisterUserResponse){};
 
     // client side straming RPC
-    rpc UploadFile(stream Chunk) returns (UploadStatus) {};
+  //  rpc UploadFile(stream Chunk) returns (UploadStatus) {};
 
     // server side streaming RPC
-    rpc DownloadFile(GetFileRequest) returns (stream Chunk){};
+  //  rpc DownloadFile(GetFileRequest) returns (stream Chunk){};
 }
 
 message UserDetails{
@@ -30,26 +30,26 @@ message RegisterUserResponse{
 }
 
 
-message Chunk {
-    bytes Content = 1;
-}
+// message Chunk {
+//     bytes Content = 1;
+// }
 
-enum UploadStatusCode {
-Unknown = 0;
-Ok = 1;
-Failed = 2;
-}
-
-
-message UploadStatus {
-string message = 1;
-UploadStatusCode code = 2;
-}
+// enum UploadStatusCode {
+// Unknown = 0;
+// Ok = 1;
+// Failed = 2;
+// }
 
 
-message GetFileRequest{
-string name=1;
-}
+// message UploadStatus {
+// string message = 1;
+// UploadStatusCode code = 2;
+// }
+
+
+// message GetFileRequest{
+// string name=1;
+// }
 
 
 

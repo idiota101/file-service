@@ -24,34 +24,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type UploadStatusCode int32
-
-const (
-	UploadStatusCode_Unknown UploadStatusCode = 0
-	UploadStatusCode_Ok      UploadStatusCode = 1
-	UploadStatusCode_Failed  UploadStatusCode = 2
-)
-
-var UploadStatusCode_name = map[int32]string{
-	0: "Unknown",
-	1: "Ok",
-	2: "Failed",
-}
-
-var UploadStatusCode_value = map[string]int32{
-	"Unknown": 0,
-	"Ok":      1,
-	"Failed":  2,
-}
-
-func (x UploadStatusCode) String() string {
-	return proto.EnumName(UploadStatusCode_name, int32(x))
-}
-
-func (UploadStatusCode) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{0}
-}
-
 type UserDetails struct {
 	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Email                string   `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
@@ -185,168 +157,30 @@ func (m *RegisterUserResponse) GetMessage() string {
 	return ""
 }
 
-type Chunk struct {
-	Content              []byte   `protobuf:"bytes,1,opt,name=Content,proto3" json:"Content,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Chunk) Reset()         { *m = Chunk{} }
-func (m *Chunk) String() string { return proto.CompactTextString(m) }
-func (*Chunk) ProtoMessage()    {}
-func (*Chunk) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{3}
-}
-
-func (m *Chunk) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Chunk.Unmarshal(m, b)
-}
-func (m *Chunk) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Chunk.Marshal(b, m, deterministic)
-}
-func (m *Chunk) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Chunk.Merge(m, src)
-}
-func (m *Chunk) XXX_Size() int {
-	return xxx_messageInfo_Chunk.Size(m)
-}
-func (m *Chunk) XXX_DiscardUnknown() {
-	xxx_messageInfo_Chunk.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Chunk proto.InternalMessageInfo
-
-func (m *Chunk) GetContent() []byte {
-	if m != nil {
-		return m.Content
-	}
-	return nil
-}
-
-type UploadStatus struct {
-	Message              string           `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
-	Code                 UploadStatusCode `protobuf:"varint,2,opt,name=code,proto3,enum=v1.UploadStatusCode" json:"code,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
-}
-
-func (m *UploadStatus) Reset()         { *m = UploadStatus{} }
-func (m *UploadStatus) String() string { return proto.CompactTextString(m) }
-func (*UploadStatus) ProtoMessage()    {}
-func (*UploadStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{4}
-}
-
-func (m *UploadStatus) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UploadStatus.Unmarshal(m, b)
-}
-func (m *UploadStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UploadStatus.Marshal(b, m, deterministic)
-}
-func (m *UploadStatus) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UploadStatus.Merge(m, src)
-}
-func (m *UploadStatus) XXX_Size() int {
-	return xxx_messageInfo_UploadStatus.Size(m)
-}
-func (m *UploadStatus) XXX_DiscardUnknown() {
-	xxx_messageInfo_UploadStatus.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UploadStatus proto.InternalMessageInfo
-
-func (m *UploadStatus) GetMessage() string {
-	if m != nil {
-		return m.Message
-	}
-	return ""
-}
-
-func (m *UploadStatus) GetCode() UploadStatusCode {
-	if m != nil {
-		return m.Code
-	}
-	return UploadStatusCode_Unknown
-}
-
-type GetFileRequest struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GetFileRequest) Reset()         { *m = GetFileRequest{} }
-func (m *GetFileRequest) String() string { return proto.CompactTextString(m) }
-func (*GetFileRequest) ProtoMessage()    {}
-func (*GetFileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{5}
-}
-
-func (m *GetFileRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetFileRequest.Unmarshal(m, b)
-}
-func (m *GetFileRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetFileRequest.Marshal(b, m, deterministic)
-}
-func (m *GetFileRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetFileRequest.Merge(m, src)
-}
-func (m *GetFileRequest) XXX_Size() int {
-	return xxx_messageInfo_GetFileRequest.Size(m)
-}
-func (m *GetFileRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetFileRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GetFileRequest proto.InternalMessageInfo
-
-func (m *GetFileRequest) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
 func init() {
-	proto.RegisterEnum("v1.UploadStatusCode", UploadStatusCode_name, UploadStatusCode_value)
 	proto.RegisterType((*UserDetails)(nil), "v1.UserDetails")
 	proto.RegisterType((*RegisterUserRequest)(nil), "v1.RegisterUserRequest")
 	proto.RegisterType((*RegisterUserResponse)(nil), "v1.RegisterUserResponse")
-	proto.RegisterType((*Chunk)(nil), "v1.Chunk")
-	proto.RegisterType((*UploadStatus)(nil), "v1.UploadStatus")
-	proto.RegisterType((*GetFileRequest)(nil), "v1.GetFileRequest")
 }
 
 func init() { proto.RegisterFile("file-service.proto", fileDescriptor_b50cba0e4ffba287) }
 
 var fileDescriptor_b50cba0e4ffba287 = []byte{
-	// 353 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x52, 0xdd, 0xce, 0x9a, 0x40,
-	0x10, 0x05, 0xea, 0x4f, 0x1d, 0x88, 0x25, 0x53, 0x93, 0x12, 0xae, 0xda, 0x4d, 0x2f, 0x4c, 0x13,
-	0x8d, 0xe8, 0x23, 0x60, 0x6c, 0xef, 0x9a, 0x60, 0x7c, 0x80, 0xad, 0x4c, 0x2d, 0x11, 0x77, 0x29,
-	0xbb, 0xe8, 0x8b, 0x7d, 0x0f, 0xf8, 0x85, 0x25, 0x28, 0xfa, 0xf9, 0xdd, 0x71, 0x98, 0x33, 0x67,
-	0xce, 0x39, 0x00, 0xf8, 0x37, 0xcb, 0x69, 0xa6, 0xa8, 0x3c, 0x67, 0x7b, 0x9a, 0x17, 0xa5, 0xd4,
-	0x12, 0x9d, 0x73, 0xc4, 0xb6, 0xe0, 0xee, 0x14, 0x95, 0x6b, 0xd2, 0x3c, 0xcb, 0x15, 0x22, 0xf4,
-	0x04, 0x3f, 0x51, 0x60, 0x7f, 0xb5, 0xa7, 0xa3, 0xc4, 0x3c, 0xe3, 0x04, 0xfa, 0x74, 0xe2, 0x59,
-	0x1e, 0x38, 0xe6, 0x65, 0x03, 0x30, 0x84, 0x8f, 0x05, 0x57, 0xea, 0x22, 0xcb, 0x34, 0xf8, 0x60,
-	0x06, 0x57, 0xcc, 0x7e, 0xc1, 0xe7, 0x84, 0x0e, 0x99, 0xd2, 0x54, 0xd6, 0xe2, 0x09, 0xfd, 0xaf,
-	0x48, 0x69, 0x8c, 0xc0, 0xad, 0x6e, 0xb7, 0xcc, 0x0d, 0x77, 0xf9, 0x69, 0x7e, 0x8e, 0xe6, 0x1d,
-	0x0b, 0x49, 0x97, 0xc3, 0x16, 0x30, 0xb9, 0x57, 0x52, 0x85, 0x14, 0x8a, 0x30, 0x80, 0xe1, 0x89,
-	0x94, 0xe2, 0x87, 0xd6, 0x6a, 0x0b, 0xd9, 0x37, 0xe8, 0xc7, 0xff, 0x2a, 0x71, 0xac, 0x29, 0xb1,
-	0x14, 0x9a, 0x84, 0x36, 0x14, 0x2f, 0x69, 0x21, 0x4b, 0xc0, 0xdb, 0x15, 0xb9, 0xe4, 0xe9, 0x56,
-	0x73, 0x5d, 0xa9, 0xf7, 0xc5, 0x70, 0x0a, 0xbd, 0xbd, 0x4c, 0xc9, 0x24, 0x1f, 0x2f, 0x27, 0xc6,
-	0x6a, 0x67, 0x33, 0x96, 0x29, 0x25, 0x86, 0xc1, 0xbe, 0xc3, 0xf8, 0x27, 0xe9, 0x4d, 0x96, 0x53,
-	0x9b, 0xf6, 0x49, 0x95, 0x3f, 0x56, 0xe0, 0x3f, 0xee, 0xa3, 0x0b, 0xc3, 0x9d, 0x38, 0x0a, 0x79,
-	0x11, 0xbe, 0x85, 0x03, 0x70, 0x7e, 0x1f, 0x7d, 0x1b, 0x01, 0x06, 0x1b, 0x9e, 0xe5, 0x94, 0xfa,
-	0xce, 0xf2, 0xc5, 0x06, 0xb7, 0x16, 0xde, 0x36, 0x1f, 0x0f, 0x63, 0xf0, 0xba, 0x9d, 0xe0, 0x97,
-	0xda, 0xd6, 0x93, 0xbe, 0xc3, 0xe0, 0xed, 0xa0, 0xa9, 0x8f, 0x59, 0x38, 0x03, 0x68, 0x9c, 0xd4,
-	0xca, 0x38, 0xaa, 0x99, 0xa6, 0xb6, 0xd0, 0x7f, 0x0c, 0xc9, 0xac, 0xa9, 0x8d, 0x11, 0x78, 0x6b,
-	0x79, 0x11, 0xd7, 0x05, 0xac, 0x59, 0xf7, 0x81, 0xc3, 0x9b, 0x08, 0xb3, 0x16, 0xf6, 0x9f, 0x81,
-	0xf9, 0xc9, 0x56, 0xaf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x68, 0x47, 0x93, 0x9e, 0x7a, 0x02, 0x00,
-	0x00,
+	// 212 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x90, 0xcd, 0x4a, 0xc7, 0x30,
+	0x10, 0xc4, 0xfd, 0xd7, 0xef, 0x8d, 0x20, 0xac, 0x05, 0x43, 0x4f, 0x92, 0x93, 0x17, 0x8b, 0xad,
+	0x8f, 0xa0, 0x88, 0xe7, 0x14, 0x1f, 0x20, 0xea, 0x5a, 0x02, 0x69, 0x53, 0xb3, 0x69, 0x7d, 0x7d,
+	0x69, 0x4a, 0xb5, 0xa2, 0xb7, 0x4c, 0x66, 0x99, 0xdf, 0xec, 0x02, 0xbe, 0x5b, 0x47, 0x37, 0x4c,
+	0x61, 0xb2, 0xaf, 0x54, 0x0e, 0xc1, 0x47, 0x8f, 0xd9, 0x54, 0xa9, 0x06, 0xc4, 0x33, 0x53, 0x78,
+	0xa0, 0x68, 0xac, 0x63, 0x44, 0x38, 0xe8, 0x4d, 0x47, 0x72, 0x77, 0xb5, 0xbb, 0x3e, 0xd5, 0xe9,
+	0x8d, 0x39, 0x1c, 0x52, 0x67, 0xac, 0x93, 0x59, 0xfa, 0x5c, 0x04, 0x16, 0x70, 0x32, 0x18, 0xe6,
+	0x4f, 0x1f, 0xde, 0xe4, 0x7e, 0x32, 0xbe, 0xb5, 0x7a, 0x82, 0x0b, 0x4d, 0xad, 0xe5, 0x48, 0x61,
+	0x0e, 0xd7, 0xf4, 0x31, 0x12, 0x47, 0xac, 0x40, 0x8c, 0x3f, 0xac, 0xc4, 0x10, 0xf5, 0x79, 0x39,
+	0x55, 0xe5, 0xa6, 0x82, 0xde, 0xce, 0xa8, 0x5b, 0xc8, 0x7f, 0x27, 0xf1, 0xe0, 0x7b, 0x26, 0x94,
+	0x70, 0xdc, 0x11, 0xb3, 0x69, 0xd7, 0xaa, 0xab, 0xac, 0x35, 0x88, 0x47, 0xeb, 0xa8, 0x59, 0x36,
+	0xc5, 0x7b, 0x38, 0xdb, 0x06, 0xe0, 0xe5, 0x8c, 0xfb, 0xa7, 0x5c, 0x21, 0xff, 0x1a, 0x0b, 0x4b,
+	0xed, 0xbd, 0x1c, 0xa5, 0x7b, 0xdd, 0x7d, 0x05, 0x00, 0x00, 0xff, 0xff, 0xd8, 0xd9, 0xa5, 0xa3,
+	0x45, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -363,10 +197,6 @@ const _ = grpc.SupportPackageIsVersion4
 type FileServiceClient interface {
 	//simple RPC
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
-	// client side straming RPC
-	UploadFile(ctx context.Context, opts ...grpc.CallOption) (FileService_UploadFileClient, error)
-	// server side streaming RPC
-	DownloadFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (FileService_DownloadFileClient, error)
 }
 
 type fileServiceClient struct {
@@ -386,80 +216,10 @@ func (c *fileServiceClient) RegisterUser(ctx context.Context, in *RegisterUserRe
 	return out, nil
 }
 
-func (c *fileServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (FileService_UploadFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_FileService_serviceDesc.Streams[0], "/v1.FileService/UploadFile", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &fileServiceUploadFileClient{stream}
-	return x, nil
-}
-
-type FileService_UploadFileClient interface {
-	Send(*Chunk) error
-	CloseAndRecv() (*UploadStatus, error)
-	grpc.ClientStream
-}
-
-type fileServiceUploadFileClient struct {
-	grpc.ClientStream
-}
-
-func (x *fileServiceUploadFileClient) Send(m *Chunk) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *fileServiceUploadFileClient) CloseAndRecv() (*UploadStatus, error) {
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	m := new(UploadStatus)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *fileServiceClient) DownloadFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (FileService_DownloadFileClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_FileService_serviceDesc.Streams[1], "/v1.FileService/DownloadFile", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &fileServiceDownloadFileClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type FileService_DownloadFileClient interface {
-	Recv() (*Chunk, error)
-	grpc.ClientStream
-}
-
-type fileServiceDownloadFileClient struct {
-	grpc.ClientStream
-}
-
-func (x *fileServiceDownloadFileClient) Recv() (*Chunk, error) {
-	m := new(Chunk)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // FileServiceServer is the server API for FileService service.
 type FileServiceServer interface {
 	//simple RPC
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
-	// client side straming RPC
-	UploadFile(FileService_UploadFileServer) error
-	// server side streaming RPC
-	DownloadFile(*GetFileRequest, FileService_DownloadFileServer) error
 }
 
 // UnimplementedFileServiceServer can be embedded to have forward compatible implementations.
@@ -468,12 +228,6 @@ type UnimplementedFileServiceServer struct {
 
 func (*UnimplementedFileServiceServer) RegisterUser(ctx context.Context, req *RegisterUserRequest) (*RegisterUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
-}
-func (*UnimplementedFileServiceServer) UploadFile(srv FileService_UploadFileServer) error {
-	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
-}
-func (*UnimplementedFileServiceServer) DownloadFile(req *GetFileRequest, srv FileService_DownloadFileServer) error {
-	return status.Errorf(codes.Unimplemented, "method DownloadFile not implemented")
 }
 
 func RegisterFileServiceServer(s *grpc.Server, srv FileServiceServer) {
@@ -498,53 +252,6 @@ func _FileService_RegisterUser_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(FileServiceServer).UploadFile(&fileServiceUploadFileServer{stream})
-}
-
-type FileService_UploadFileServer interface {
-	SendAndClose(*UploadStatus) error
-	Recv() (*Chunk, error)
-	grpc.ServerStream
-}
-
-type fileServiceUploadFileServer struct {
-	grpc.ServerStream
-}
-
-func (x *fileServiceUploadFileServer) SendAndClose(m *UploadStatus) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *fileServiceUploadFileServer) Recv() (*Chunk, error) {
-	m := new(Chunk)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func _FileService_DownloadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(GetFileRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(FileServiceServer).DownloadFile(m, &fileServiceDownloadFileServer{stream})
-}
-
-type FileService_DownloadFileServer interface {
-	Send(*Chunk) error
-	grpc.ServerStream
-}
-
-type fileServiceDownloadFileServer struct {
-	grpc.ServerStream
-}
-
-func (x *fileServiceDownloadFileServer) Send(m *Chunk) error {
-	return x.ServerStream.SendMsg(m)
-}
-
 var _FileService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "v1.FileService",
 	HandlerType: (*FileServiceServer)(nil),
@@ -554,17 +261,6 @@ var _FileService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _FileService_RegisterUser_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "UploadFile",
-			Handler:       _FileService_UploadFile_Handler,
-			ClientStreams: true,
-		},
-		{
-			StreamName:    "DownloadFile",
-			Handler:       _FileService_DownloadFile_Handler,
-			ServerStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "file-service.proto",
 }
