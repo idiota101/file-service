@@ -45,6 +45,7 @@ func main() {
 	//Login
 	//req := registeration()
 	resp, err := c.RegisterUser(ctx, &v1.RegisterUserRequest{
+		Api: apiVersion,
 		UserDetails: &v1.UserDetails{
 			Name:     "sajan",
 			Email:    "sjnjaiswal",

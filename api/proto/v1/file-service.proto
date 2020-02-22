@@ -22,7 +22,8 @@ message UserDetails{
 }
 
 message RegisterUserRequest{
-    UserDetails userDetails=1;
+    string api=1;
+    UserDetails userDetails=2;
 }
 
 message RegisterUserResponse{
