@@ -11,7 +11,7 @@ import (
 
 	"github.com/sajanjswl/file-service/pkg/protocol/grpc"
 
-	v1 "github.com/sajanjswl/file-service/service/v1"
+	v1 "github.com/sajanjswl/file-service/pkg/service/v1"
 
 	"os"
 	//"fmt"
