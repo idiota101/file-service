@@ -2,21 +2,23 @@ package v1
 
 import (
 	"context"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	v1 "github.com/sajanjswl/file-service/pkg/api/v1"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 const (
 	// apiVersion is version of API is provided by server
-	apiVersion     = "v1"
-	fileDatabase   = os.Getenv("FILE_SERVICE_DATABASE")
-	fileCollection = os.Getenv("FILE_SERVICE_COLLECTION")
+	apiVersion = "v1"
+	// fileDatabase   = os.Getenv("FILE_SERVICE_DATABASE")
+	// fileCollection = os.Getenv("FILE_SERVICE_COLLECTION")
 )
 
 type fileServiceServer struct {
@@ -41,37 +43,36 @@ func NewFileServiceServer(db *mongo.Client) v1.FileServiceServer {
 
 func (f *fileServiceServer) RegisterUser(ctx context.Context, req *v1.RegisterUserRequest) (*v1.RegisterUserResponse, error) {
 
-	if err := s.checkAPI(req.GetApi()); err != nil {
+	if err := f.checkAPI(req.GetApi()); err != nil {
+		log.Error(err)
 		return nil, err
 	}
 
 	//bycrpting the plaint text password
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.GetUser().GetPassword()), bcrypt.MinCost)
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.GetUserDetails().GetPassword()), bcrypt.MinCost)
+	log.Println("passwor", passwordHash)
 	if err != nil {
 		log.Error(err)
-		return nil, status.Errorf(codes.Internal, config.InternalError)
-	}
-, err := bcrypt.GenerateFromPassword([]byte(req.GetUserDetails().GetPassword(), bcrypt.MinCost)
-	if err != nil {
-		log.Error(err)
-		return nil, status.Errorf(codes.Internal, config.InternalError)
+		return nil, err
 	}
 
-		password:=string(passwordHash)
+	password := string(passwordHash)
 
-	dbCol := f.db.Database(fileDatabase).Collection(fileCollection)
-	_, err = dbCol.InsertOne(mongoCtx, bson.D{
+	dbCol := f.db.Database(os.Getenv("FILE_SERVICE_DATABASE")).Collection(os.Getenv("FILE_SERVICE_COLLECTION"))
+	_, err = dbCol.InsertOne(ctx, bson.D{
 		{Key: "name", Value: req.GetUserDetails().GetName()},
 		{Key: "email", Value: req.GetUserDetails().GetEmail()},
-		{Key: "password", Value: password },
+		{Key: "password", Value: password},
 	})
 
 	if err != nil {
-		log.Println(err)
-		return false
+		log.Error(err)
+		return nil, err
+	} else {
+		return &v1.RegisterUserResponse{
+			Message: "successfully tested",
+		}, nil
+
 	}
 
-	return &v1.RegisterUserResponse{
-		Message: "successfully tested",
-	}, nil
 }
