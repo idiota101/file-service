@@ -33,20 +33,25 @@ var registerCmd = &cobra.Command{
 	Long: `register registers a file user.
 	register requires username emailId and password to register`,
 	Run: func(cmd *cobra.Command, args []string) {
+		password, err := cmd.Flags().GetString("password")
+		if err != nil {
+			return
+		}
 
-		resp, err := client.RegisterUser(requestCtx, &v1.RegisterUserRequest{
-			Api: apiVersion,
-			UserDetails: &v1.UserDetails{
-				Name:     "sajan",
-				Email:    "sjnjaiswalfhgfjfg",
-				Password: "sjfddnf",
-			},
+		username, err := cmd.Flags().GetString("username")
+		if err != nil {
+			return
+		}
+
+		resp, err := client.CreateUser(requestCtx, &v1.CreateUserRequest{
+			Api:      apiVersion,
+			Username: username,
+			Password: password,
 		})
 
 		if err != nil {
 			log.Println(err)
 		} else {
-
 			log.Println(resp)
 		}
 
@@ -55,10 +60,9 @@ var registerCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(registerCmd)
-	registerCmd.Flags().StringP("name", "n", "", "enter your name")
-	registerCmd.Flags().StringP("emailID", "u", "", "enter your email address")
+	registerCmd.Flags().StringP("username", "u", "", "enter your username")
 	registerCmd.Flags().StringP("password", "p", "", "enter your password")
-	registerCmd.MarkFlagRequired("emailID")
+	registerCmd.MarkFlagRequired("username")
 	registerCmd.MarkFlagRequired("password")
 
 	// Here you will define your flags and configuration settings.

@@ -5,47 +5,42 @@ package v1;
 
 service FileService {
     //simple RPC
-    rpc RegisterUser( RegisterUserRequest) returns (RegisterUserResponse){};
+    rpc CreateUser( CreateUserRequest) returns (CreateUserResponse){};
 
-    // client side straming RPC
-  //  rpc UploadFile(stream Chunk) returns (UploadStatus) {};
+   //client side straming RPC
+   rpc UploadFile(stream Chunk) returns (UploadStatus) {};
 
     // server side streaming RPC
   //  rpc DownloadFile(GetFileRequest) returns (stream Chunk){};
 }
 
-message UserDetails{
-    string name=1;
-    string email=2;
-    string password=3;
 
-}
-
-message RegisterUserRequest{
+message CreateUserRequest{
     string api=1;
-    UserDetails userDetails=2;
+    string username=2;
+    string password=3;
 }
 
-message RegisterUserResponse{
+message CreateUserResponse{
     string message=1;
 }
 
 
-// message Chunk {
-//     bytes Content = 1;
-// }
+message Chunk {
+    bytes Content = 1;
+}
 
-// enum UploadStatusCode {
-// Unknown = 0;
-// Ok = 1;
-// Failed = 2;
-// }
+enum UploadStatusCode {
+Unknown = 0;
+Ok = 1;
+Failed = 2;
+}
 
 
-// message UploadStatus {
-// string message = 1;
-// UploadStatusCode code = 2;
-// }
+message UploadStatus {
+string message = 1;
+UploadStatusCode code = 2;
+}
 
 
 // message GetFileRequest{

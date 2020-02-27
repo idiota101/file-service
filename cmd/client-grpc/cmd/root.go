@@ -27,6 +27,7 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/testdata"
 )
 
 var cfgFile string
@@ -34,7 +35,7 @@ var cfgFile string
 // Client and context global vars
 var client v1.FileServiceClient
 var requestCtx context.Context
-
+var requestOpts grpc.DialOption
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -75,21 +76,21 @@ func init() {
 	// After Cobra root config init
 	// We initialize the client
 	fmt.Println("Starting File Service Client...")
+
 	creds, err := credentials.NewClientTLSFromFile(testdata.Path("ca.pem"), "x.test.youtube.com")
 	if err != nil {
 		log.Fatalf("failed to load credentials: %v", err)
 	}
 
-	conn, err := grpc.Dial("localhost:8080", grpc.WithTransportCredentials(creds))
+	requestCtx, _ = context.WithTimeout(context.Background(), 10*time.Second)
+
+	requestOpts = grpc.WithTransportCredentials(creds)
+	conn, err := grpc.Dial("localhost:8080", requestOpts)
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		log.Fatalf("Unable to establish client connection to localhost:50051: %v", err)
 	}
-	defer conn.Close()
 
-	client := v1.NewFileServiceClient(conn)
-
-	requestCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	client = v1.NewFileServiceClient(conn)
 
 }
 
