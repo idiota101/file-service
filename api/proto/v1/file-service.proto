@@ -11,7 +11,7 @@ service FileService {
    rpc UploadFile(stream Chunk) returns (UploadStatus) {};
 
     // server side streaming RPC
-  //  rpc DownloadFile(GetFileRequest) returns (stream Chunk){};
+    rpc DownloadFile(DownloadFileRequest) returns (stream Chunk){};
 }
 
 
@@ -43,9 +43,11 @@ UploadStatusCode code = 2;
 }
 
 
-// message GetFileRequest{
-// string name=1;
-// }
+message DownloadFileRequest{
+    string api=1;
+    string username=2;
+    string password=3;
+}
 
 
 

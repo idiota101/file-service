@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc/metadata"
 
 	v1 "github.com/sajanjswl/file-service/pkg/api/v1"
 )
@@ -32,6 +33,17 @@ var uploadCmd = &cobra.Command{
 	Long: `upload a documents on the server through gRPC.
 	upload requires a specific file path`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		username, err := cmd.Flags().GetString("username")
+		if err != nil {
+			return
+		}
+
+		password, err := cmd.Flags().GetString("password")
+		if err != nil {
+			return
+		}
+
 		path, err := cmd.Flags().GetString("path")
 		if err != nil {
 			return
@@ -43,7 +55,12 @@ var uploadCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		stream, err := client.UploadFile(requestCtx)
+		ctx := metadata.AppendToOutgoingContext(requestCtx, "username", username, "password", password)
+
+		stream, err := client.UploadFile(ctx)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		buf := make([]byte, 1024)
 
@@ -85,8 +102,14 @@ var uploadCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(uploadCmd)
-	uploadCmd.Flags().StringP("path", "p", "", "file path")
+	uploadCmd.Flags().StringP("username", "u", "", "username")
+
+	uploadCmd.Flags().StringP("password", "p", "", "password")
+
+	uploadCmd.Flags().StringP("path", "e", "", "file path")
 	registerCmd.MarkFlagRequired("path")
+	registerCmd.MarkFlagRequired("username")
+	registerCmd.MarkFlagRequired("password")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command

@@ -23,7 +23,7 @@ import (
 
 const (
 	// apiVersion is version of API is provided by server
-	apiVersion = "v1"
+	ApiVersion = "v1"
 )
 
 // registerCmd represents the register command
@@ -31,7 +31,7 @@ var registerCmd = &cobra.Command{
 	Use:   "register",
 	Short: "Register is used to register a file user",
 	Long: `register registers a file user.
-	register requires username emailId and password to register`,
+	register requires username and password to register`,
 	Run: func(cmd *cobra.Command, args []string) {
 		password, err := cmd.Flags().GetString("password")
 		if err != nil {
@@ -44,7 +44,7 @@ var registerCmd = &cobra.Command{
 		}
 
 		resp, err := client.CreateUser(requestCtx, &v1.CreateUserRequest{
-			Api:      apiVersion,
+			Api:      ApiVersion,
 			Username: username,
 			Password: password,
 		})
