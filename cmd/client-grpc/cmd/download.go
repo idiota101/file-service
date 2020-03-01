@@ -57,7 +57,7 @@ var downloadCmd = &cobra.Command{
 			log.Fatalf("error while calling DownloadFile Rpc %v", err)
 		}
 
-		file, err := os.Create(string(username + ".pdf"))
+		file, err := os.Create(string(username + ".pd"))
 
 		if err != nil {
 			log.Fatal("err")
@@ -70,7 +70,13 @@ var downloadCmd = &cobra.Command{
 					log.Println("successfully downloaded")
 					break
 				}
-				log.Fatal("unable to download file")
+				err2 := os.Remove(string(username + ".pd"))
+
+				if err2 != nil {
+					log.Println(err)
+
+				}
+				log.Fatal("unable to download file", err)
 
 			}
 

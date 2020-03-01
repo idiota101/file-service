@@ -4,7 +4,7 @@ package v1;
 
 
 service FileService {
-    //simple RPC
+    // createUser rpc
     rpc CreateUser( CreateUserRequest) returns (CreateUserResponse){};
 
    //client side straming RPC
@@ -12,13 +12,22 @@ service FileService {
 
     // server side streaming RPC
     rpc DownloadFile(DownloadFileRequest) returns (stream Chunk){};
+
+
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse){};
+
+
+}
+
+message user{
+    string username=1;
+    string password=2;
 }
 
 
 message CreateUserRequest{
     string api=1;
-    string username=2;
-    string password=3;
+    user userDetails=2;
 }
 
 message CreateUserResponse{
@@ -49,6 +58,16 @@ message DownloadFileRequest{
     string password=3;
 }
 
+message DeleteUserRequest{
+    string api=1;
+    string username=2;
+    string password=3;
+
+}
+
+message DeleteUserResponse{
+    string message=1;
+}
 
 
 // protoc proto/pdf.proto --go_out=plugins=grpc:.

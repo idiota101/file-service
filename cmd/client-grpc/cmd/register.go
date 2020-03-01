@@ -44,16 +44,17 @@ var registerCmd = &cobra.Command{
 		}
 
 		resp, err := client.CreateUser(requestCtx, &v1.CreateUserRequest{
-			Api:      ApiVersion,
-			Username: username,
-			Password: password,
+			Api: ApiVersion,
+			UserDetails: &v1.User{
+				Username: username,
+				Password: password,
+			},
 		})
 
 		if err != nil {
-			log.Println(err)
-		} else {
-			log.Println(resp)
+			log.Fatal(err)
 		}
+		log.Println(resp)
 
 	},
 }

@@ -52,10 +52,56 @@ func (UploadStatusCode) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_b50cba0e4ffba287, []int{0}
 }
 
+type User struct {
+	Username             string   `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password             string   `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *User) Reset()         { *m = User{} }
+func (m *User) String() string { return proto.CompactTextString(m) }
+func (*User) ProtoMessage()    {}
+func (*User) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b50cba0e4ffba287, []int{0}
+}
+
+func (m *User) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_User.Unmarshal(m, b)
+}
+func (m *User) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_User.Marshal(b, m, deterministic)
+}
+func (m *User) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_User.Merge(m, src)
+}
+func (m *User) XXX_Size() int {
+	return xxx_messageInfo_User.Size(m)
+}
+func (m *User) XXX_DiscardUnknown() {
+	xxx_messageInfo_User.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_User proto.InternalMessageInfo
+
+func (m *User) GetUsername() string {
+	if m != nil {
+		return m.Username
+	}
+	return ""
+}
+
+func (m *User) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
 type CreateUserRequest struct {
 	Api                  string   `protobuf:"bytes,1,opt,name=api,proto3" json:"api,omitempty"`
-	Username             string   `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
-	Password             string   `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	UserDetails          *User    `protobuf:"bytes,2,opt,name=userDetails,proto3" json:"userDetails,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -65,7 +111,7 @@ func (m *CreateUserRequest) Reset()         { *m = CreateUserRequest{} }
 func (m *CreateUserRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateUserRequest) ProtoMessage()    {}
 func (*CreateUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{0}
+	return fileDescriptor_b50cba0e4ffba287, []int{1}
 }
 
 func (m *CreateUserRequest) XXX_Unmarshal(b []byte) error {
@@ -93,18 +139,11 @@ func (m *CreateUserRequest) GetApi() string {
 	return ""
 }
 
-func (m *CreateUserRequest) GetUsername() string {
+func (m *CreateUserRequest) GetUserDetails() *User {
 	if m != nil {
-		return m.Username
+		return m.UserDetails
 	}
-	return ""
-}
-
-func (m *CreateUserRequest) GetPassword() string {
-	if m != nil {
-		return m.Password
-	}
-	return ""
+	return nil
 }
 
 type CreateUserResponse struct {
@@ -118,7 +157,7 @@ func (m *CreateUserResponse) Reset()         { *m = CreateUserResponse{} }
 func (m *CreateUserResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateUserResponse) ProtoMessage()    {}
 func (*CreateUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{1}
+	return fileDescriptor_b50cba0e4ffba287, []int{2}
 }
 
 func (m *CreateUserResponse) XXX_Unmarshal(b []byte) error {
@@ -157,7 +196,7 @@ func (m *Chunk) Reset()         { *m = Chunk{} }
 func (m *Chunk) String() string { return proto.CompactTextString(m) }
 func (*Chunk) ProtoMessage()    {}
 func (*Chunk) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{2}
+	return fileDescriptor_b50cba0e4ffba287, []int{3}
 }
 
 func (m *Chunk) XXX_Unmarshal(b []byte) error {
@@ -197,7 +236,7 @@ func (m *UploadStatus) Reset()         { *m = UploadStatus{} }
 func (m *UploadStatus) String() string { return proto.CompactTextString(m) }
 func (*UploadStatus) ProtoMessage()    {}
 func (*UploadStatus) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{3}
+	return fileDescriptor_b50cba0e4ffba287, []int{4}
 }
 
 func (m *UploadStatus) XXX_Unmarshal(b []byte) error {
@@ -245,7 +284,7 @@ func (m *DownloadFileRequest) Reset()         { *m = DownloadFileRequest{} }
 func (m *DownloadFileRequest) String() string { return proto.CompactTextString(m) }
 func (*DownloadFileRequest) ProtoMessage()    {}
 func (*DownloadFileRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b50cba0e4ffba287, []int{4}
+	return fileDescriptor_b50cba0e4ffba287, []int{5}
 }
 
 func (m *DownloadFileRequest) XXX_Unmarshal(b []byte) error {
@@ -287,40 +326,141 @@ func (m *DownloadFileRequest) GetPassword() string {
 	return ""
 }
 
+type DeleteUserRequest struct {
+	Api                  string   `protobuf:"bytes,1,opt,name=api,proto3" json:"api,omitempty"`
+	Username             string   `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Password             string   `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteUserRequest) Reset()         { *m = DeleteUserRequest{} }
+func (m *DeleteUserRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteUserRequest) ProtoMessage()    {}
+func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b50cba0e4ffba287, []int{6}
+}
+
+func (m *DeleteUserRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteUserRequest.Unmarshal(m, b)
+}
+func (m *DeleteUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteUserRequest.Marshal(b, m, deterministic)
+}
+func (m *DeleteUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteUserRequest.Merge(m, src)
+}
+func (m *DeleteUserRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteUserRequest.Size(m)
+}
+func (m *DeleteUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteUserRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteUserRequest proto.InternalMessageInfo
+
+func (m *DeleteUserRequest) GetApi() string {
+	if m != nil {
+		return m.Api
+	}
+	return ""
+}
+
+func (m *DeleteUserRequest) GetUsername() string {
+	if m != nil {
+		return m.Username
+	}
+	return ""
+}
+
+func (m *DeleteUserRequest) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
+type DeleteUserResponse struct {
+	Message              string   `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeleteUserResponse) Reset()         { *m = DeleteUserResponse{} }
+func (m *DeleteUserResponse) String() string { return proto.CompactTextString(m) }
+func (*DeleteUserResponse) ProtoMessage()    {}
+func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b50cba0e4ffba287, []int{7}
+}
+
+func (m *DeleteUserResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteUserResponse.Unmarshal(m, b)
+}
+func (m *DeleteUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteUserResponse.Marshal(b, m, deterministic)
+}
+func (m *DeleteUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteUserResponse.Merge(m, src)
+}
+func (m *DeleteUserResponse) XXX_Size() int {
+	return xxx_messageInfo_DeleteUserResponse.Size(m)
+}
+func (m *DeleteUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteUserResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeleteUserResponse proto.InternalMessageInfo
+
+func (m *DeleteUserResponse) GetMessage() string {
+	if m != nil {
+		return m.Message
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("v1.UploadStatusCode", UploadStatusCode_name, UploadStatusCode_value)
+	proto.RegisterType((*User)(nil), "v1.user")
 	proto.RegisterType((*CreateUserRequest)(nil), "v1.CreateUserRequest")
 	proto.RegisterType((*CreateUserResponse)(nil), "v1.CreateUserResponse")
 	proto.RegisterType((*Chunk)(nil), "v1.Chunk")
 	proto.RegisterType((*UploadStatus)(nil), "v1.UploadStatus")
 	proto.RegisterType((*DownloadFileRequest)(nil), "v1.DownloadFileRequest")
+	proto.RegisterType((*DeleteUserRequest)(nil), "v1.DeleteUserRequest")
+	proto.RegisterType((*DeleteUserResponse)(nil), "v1.DeleteUserResponse")
 }
 
 func init() { proto.RegisterFile("file-service.proto", fileDescriptor_b50cba0e4ffba287) }
 
 var fileDescriptor_b50cba0e4ffba287 = []byte{
-	// 328 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x92, 0x4f, 0x4f, 0xf2, 0x40,
-	0x10, 0xc6, 0xdb, 0xf2, 0xbe, 0x20, 0x03, 0x31, 0x75, 0xfc, 0xd7, 0xf4, 0xa4, 0x7b, 0x22, 0x26,
-	0x34, 0x02, 0x89, 0x37, 0x4f, 0x35, 0x5c, 0x4d, 0x4a, 0x38, 0x1a, 0xb3, 0xd2, 0x51, 0x1b, 0xca,
-	0x6e, 0xdd, 0xdd, 0xc2, 0x07, 0xf3, 0x0b, 0x9a, 0x6d, 0x45, 0x48, 0xd5, 0x9b, 0xb7, 0x3e, 0x33,
-	0x4f, 0x9f, 0x99, 0xfe, 0xa6, 0x80, 0xcf, 0x59, 0x4e, 0x43, 0x4d, 0x6a, 0x9d, 0x2d, 0x28, 0x2a,
-	0x94, 0x34, 0x12, 0xbd, 0xf5, 0x88, 0x3d, 0xc0, 0x51, 0xac, 0x88, 0x1b, 0x9a, 0x6b, 0x52, 0x09,
-	0xbd, 0x95, 0xa4, 0x0d, 0xfa, 0xd0, 0xe2, 0x45, 0x16, 0xb8, 0x17, 0xee, 0xa0, 0x9b, 0xd8, 0x47,
-	0x0c, 0xe1, 0xa0, 0xd4, 0xa4, 0x04, 0x5f, 0x51, 0xe0, 0x55, 0xe5, 0x2f, 0x6d, 0x7b, 0x05, 0xd7,
-	0x7a, 0x23, 0x55, 0x1a, 0xb4, 0xea, 0xde, 0x56, 0xb3, 0x08, 0x70, 0x3f, 0x5e, 0x17, 0x52, 0x68,
-	0xc2, 0x00, 0x3a, 0x2b, 0xd2, 0x9a, 0xbf, 0xd0, 0xe7, 0x8c, 0xad, 0x64, 0x97, 0xf0, 0x3f, 0x7e,
-	0x2d, 0xc5, 0xd2, 0x5a, 0x62, 0x29, 0x0c, 0x09, 0x53, 0x59, 0xfa, 0xc9, 0x56, 0xb2, 0x04, 0xfa,
-	0xf3, 0x22, 0x97, 0x3c, 0x9d, 0x19, 0x6e, 0x4a, 0xfd, 0x7b, 0x18, 0x0e, 0xe0, 0xdf, 0x42, 0xa6,
-	0xf5, 0xc2, 0x87, 0xe3, 0x93, 0x68, 0x3d, 0x8a, 0xf6, 0xdf, 0x8c, 0x65, 0x4a, 0x49, 0xe5, 0x60,
-	0x8f, 0x70, 0x7c, 0x27, 0x37, 0xc2, 0xf6, 0xa6, 0x59, 0x4e, 0x7f, 0xce, 0xe1, 0x6a, 0x02, 0x7e,
-	0x73, 0x34, 0xf6, 0xa0, 0x33, 0x17, 0x4b, 0x21, 0x37, 0xc2, 0x77, 0xb0, 0x0d, 0xde, 0xfd, 0xd2,
-	0x77, 0x11, 0xa0, 0x3d, 0xe5, 0x59, 0x4e, 0xa9, 0xef, 0x8d, 0xdf, 0x5d, 0xe8, 0xd9, 0x75, 0x66,
-	0xf5, 0xd5, 0xf0, 0x16, 0x60, 0x07, 0x13, 0x4f, 0xed, 0xf7, 0x7c, 0xbb, 0x5d, 0x78, 0xd6, 0x2c,
-	0xd7, 0xcc, 0x99, 0x83, 0x43, 0x80, 0x7a, 0x07, 0x9b, 0x89, 0xdd, 0xca, 0x67, 0x59, 0x87, 0x7e,
-	0x93, 0x0c, 0x73, 0x06, 0x2e, 0xde, 0x40, 0x7f, 0x9f, 0x09, 0x9e, 0x5b, 0xd7, 0x0f, 0x94, 0xc2,
-	0x5d, 0x12, 0x73, 0xae, 0xdd, 0xa7, 0x76, 0xf5, 0x73, 0x4d, 0x3e, 0x02, 0x00, 0x00, 0xff, 0xff,
-	0xfd, 0xfc, 0x6f, 0x58, 0x72, 0x02, 0x00, 0x00,
+	// 392 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0x4f, 0xaf, 0x9a, 0x40,
+	0x14, 0xc5, 0x01, 0xad, 0x7f, 0x2e, 0xa6, 0xc1, 0xdb, 0x7f, 0x86, 0x55, 0x3b, 0x2b, 0x63, 0x22,
+	0xa9, 0x9a, 0x74, 0xd7, 0x6e, 0x30, 0x6e, 0x9b, 0x62, 0x5c, 0x36, 0xcd, 0x54, 0x6e, 0x5b, 0x22,
+	0xce, 0x50, 0x66, 0xd0, 0xef, 0xdd, 0x4f, 0xd0, 0x0c, 0x94, 0x4a, 0xf0, 0xf9, 0x4c, 0xde, 0x4a,
+	0xef, 0xdc, 0xc3, 0xc9, 0xe1, 0x77, 0x06, 0xc0, 0x1f, 0x49, 0x4a, 0x73, 0x45, 0xf9, 0x29, 0xd9,
+	0x53, 0x90, 0xe5, 0x52, 0x4b, 0x74, 0x4e, 0x0b, 0xf6, 0x09, 0xba, 0x85, 0xa2, 0x1c, 0x7d, 0x18,
+	0x98, 0x5f, 0xc1, 0x8f, 0x34, 0xb1, 0xdf, 0xda, 0xd3, 0x61, 0xf4, 0x7f, 0x36, 0xbb, 0x8c, 0x2b,
+	0x75, 0x96, 0x79, 0x3c, 0x71, 0xaa, 0x5d, 0x3d, 0xb3, 0x2f, 0x30, 0x0e, 0x73, 0xe2, 0x9a, 0x76,
+	0x8a, 0xf2, 0x88, 0x7e, 0x17, 0xa4, 0x34, 0x7a, 0xd0, 0xe1, 0x59, 0xf2, 0xcf, 0xc7, 0xfc, 0xc5,
+	0x19, 0xb8, 0xc6, 0x6e, 0x4d, 0x9a, 0x27, 0xa9, 0x2a, 0x5d, 0xdc, 0xe5, 0x20, 0x38, 0x2d, 0x02,
+	0x73, 0x1c, 0x35, 0x97, 0x2c, 0x00, 0x6c, 0x5a, 0xaa, 0x4c, 0x0a, 0x45, 0x38, 0x81, 0xfe, 0x91,
+	0x94, 0xe2, 0x3f, 0xeb, 0x7c, 0xf5, 0xc8, 0xde, 0xc1, 0xb3, 0xf0, 0x57, 0x21, 0x0e, 0x46, 0x12,
+	0x4a, 0xa1, 0x49, 0xe8, 0x52, 0x32, 0x8a, 0xea, 0x91, 0x45, 0x30, 0xda, 0x65, 0xa9, 0xe4, 0xf1,
+	0x56, 0x73, 0x5d, 0xa8, 0xdb, 0x66, 0x38, 0x85, 0xee, 0x5e, 0xc6, 0x54, 0x26, 0x7c, 0xbe, 0x7c,
+	0x69, 0x12, 0x36, 0x9f, 0x0c, 0x65, 0x4c, 0x51, 0xa9, 0x60, 0xdf, 0xe0, 0xc5, 0x5a, 0x9e, 0x85,
+	0xd9, 0x6d, 0x92, 0x94, 0x6e, 0xbf, 0x7b, 0x13, 0xad, 0xf3, 0x08, 0xda, 0x4e, 0x0b, 0xed, 0x57,
+	0x18, 0xaf, 0x29, 0xa5, 0x7b, 0x68, 0x9f, 0x6a, 0x1f, 0x00, 0x36, 0xed, 0xef, 0x61, 0x9e, 0xad,
+	0xc0, 0x6b, 0x93, 0x40, 0x17, 0xfa, 0x3b, 0x71, 0x10, 0xf2, 0x2c, 0x3c, 0x0b, 0x7b, 0xe0, 0x7c,
+	0x3e, 0x78, 0x36, 0x02, 0xf4, 0x36, 0x3c, 0x49, 0x29, 0xf6, 0x9c, 0xe5, 0x1f, 0x1b, 0x5c, 0x43,
+	0x67, 0x5b, 0x5d, 0x3c, 0xfc, 0x08, 0x70, 0xe9, 0x16, 0x5f, 0x19, 0xbc, 0x57, 0xd7, 0xc7, 0x7f,
+	0xdd, 0x3e, 0xae, 0xb2, 0x31, 0x0b, 0xe7, 0x00, 0x55, 0x06, 0xe3, 0x89, 0xc3, 0x52, 0x67, 0xaa,
+	0xf7, 0xbd, 0x76, 0x51, 0xcc, 0x9a, 0xda, 0xf8, 0x01, 0x46, 0xcd, 0x8a, 0xf0, 0x8d, 0x51, 0x3d,
+	0x50, 0x9a, 0x7f, 0x71, 0x62, 0xd6, 0x7b, 0xdb, 0xa4, 0xbc, 0xa0, 0xa9, 0x52, 0x5e, 0x35, 0x51,
+	0xa5, 0xbc, 0x26, 0xc8, 0xac, 0xef, 0xbd, 0xf2, 0xf3, 0x5a, 0xfd, 0x0d, 0x00, 0x00, 0xff, 0xff,
+	0x16, 0xf1, 0x1e, 0x8c, 0x74, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -341,6 +481,7 @@ type FileServiceClient interface {
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (FileService_UploadFileClient, error)
 	// server side streaming RPC
 	DownloadFile(ctx context.Context, in *DownloadFileRequest, opts ...grpc.CallOption) (FileService_DownloadFileClient, error)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error)
 }
 
 type fileServiceClient struct {
@@ -426,6 +567,15 @@ func (x *fileServiceDownloadFileClient) Recv() (*Chunk, error) {
 	return m, nil
 }
 
+func (c *fileServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*DeleteUserResponse, error) {
+	out := new(DeleteUserResponse)
+	err := c.cc.Invoke(ctx, "/v1.FileService/DeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FileServiceServer is the server API for FileService service.
 type FileServiceServer interface {
 	//simple RPC
@@ -434,6 +584,7 @@ type FileServiceServer interface {
 	UploadFile(FileService_UploadFileServer) error
 	// server side streaming RPC
 	DownloadFile(*DownloadFileRequest, FileService_DownloadFileServer) error
+	DeleteUser(context.Context, *DeleteUserRequest) (*DeleteUserResponse, error)
 }
 
 // UnimplementedFileServiceServer can be embedded to have forward compatible implementations.
@@ -448,6 +599,9 @@ func (*UnimplementedFileServiceServer) UploadFile(srv FileService_UploadFileServ
 }
 func (*UnimplementedFileServiceServer) DownloadFile(req *DownloadFileRequest, srv FileService_DownloadFileServer) error {
 	return status.Errorf(codes.Unimplemented, "method DownloadFile not implemented")
+}
+func (*UnimplementedFileServiceServer) DeleteUser(ctx context.Context, req *DeleteUserRequest) (*DeleteUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
 }
 
 func RegisterFileServiceServer(s *grpc.Server, srv FileServiceServer) {
@@ -519,6 +673,24 @@ func (x *fileServiceDownloadFileServer) Send(m *Chunk) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _FileService_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FileServiceServer).DeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/v1.FileService/DeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FileServiceServer).DeleteUser(ctx, req.(*DeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _FileService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "v1.FileService",
 	HandlerType: (*FileServiceServer)(nil),
@@ -526,6 +698,10 @@ var _FileService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateUser",
 			Handler:    _FileService_CreateUser_Handler,
+		},
+		{
+			MethodName: "DeleteUser",
+			Handler:    _FileService_DeleteUser_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

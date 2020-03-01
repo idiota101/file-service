@@ -62,7 +62,7 @@ var uploadCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		buf := make([]byte, 1024)
+		buf := make([]byte, 2048)
 
 		for {
 
@@ -73,7 +73,7 @@ var uploadCmd = &cobra.Command{
 
 					break
 				}
-				log.Println(err)
+				log.Fatal(err)
 			}
 
 			log.Println("Sendin", n, "bytes", "...")
