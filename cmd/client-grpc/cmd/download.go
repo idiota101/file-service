@@ -19,6 +19,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -46,9 +47,11 @@ var downloadCmd = &cobra.Command{
 		fmt.Println("starting to do a server Streaming  RPC...")
 
 		req := &v1.DownloadFileRequest{
-			Api:      ApiVersion,
-			Username: username,
-			Password: password,
+			Api: ApiVersion,
+			UserDetails: &v1.User{
+				Username: username,
+				Password: password,
+			},
 		}
 
 		resStream, err := client.DownloadFile(requestCtx, req)
@@ -57,7 +60,9 @@ var downloadCmd = &cobra.Command{
 			log.Fatalf("error while calling DownloadFile Rpc %v", err)
 		}
 
-		file, err := os.Create(string(username + ".pd"))
+		filename := strings.SplitN(username, "@", -1)
+
+		file, err := os.Create(string(filename[0] + ".pd"))
 
 		if err != nil {
 			log.Fatal("err")

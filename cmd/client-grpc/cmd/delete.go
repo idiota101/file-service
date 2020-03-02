@@ -39,9 +39,11 @@ var deleteCmd = &cobra.Command{
 		}
 
 		resp, err := client.DeleteUser(requestCtx, &v1.DeleteUserRequest{
-			Api:      ApiVersion,
-			Username: username,
-			Password: password,
+			Api: ApiVersion,
+			UserDetails: &v1.User{
+				Username: username,
+				Password: password,
+			},
 		})
 
 		if err != nil {

@@ -54,15 +54,12 @@ UploadStatusCode code = 2;
 
 message DownloadFileRequest{
     string api=1;
-    string username=2;
-    string password=3;
+    user userDetails=2;
 }
 
 message DeleteUserRequest{
     string api=1;
-    string username=2;
-    string password=3;
-
+    user userDetails=2;
 }
 
 message DeleteUserResponse{

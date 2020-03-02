@@ -55,7 +55,7 @@ var uploadCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		ctx := metadata.AppendToOutgoingContext(requestCtx, "username", username, "password", password)
+		ctx := metadata.AppendToOutgoingContext(requestCtx, "username", username, "password", password, "apiversion", ApiVersion)
 
 		stream, err := client.UploadFile(ctx)
 		if err != nil {

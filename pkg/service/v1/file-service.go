@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"os"
-	"reflect"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
@@ -46,13 +44,6 @@ func (f *fileServiceServer) checkAPI(api string) error {
 	return errors.New("unsupported API version: Api version cannot be nil")
 }
 
-type User struct {
-	//	ID       primitive.ObjectID `bson:"_id"`
-	Username string             `json: "username"`
-	Password string             `json: "password"`
-	fileID   primitive.ObjectID `json: "fileid"`
-}
-
 func NewFileServiceServer(db *mongo.Client) v1.FileServiceServer {
 	return &fileServiceServer{db: db}
 }
@@ -77,8 +68,10 @@ func (f *fileServiceServer) CreateUser(ctx context.Context, req *v1.CreateUserRe
 	_, collection := getConn(f, "collection")
 
 	//checking if useer already exists
-	var result User
-	err := collection.FindOne(ctx, bson.D{{"username", req.GetUserDetails().GetUsername()}}).Decode(&result)
+	var results bson.M
+	err := collection.FindOne(ctx, bson.D{{"username", req.GetUserDetails().GetUsername()}}).Decode(&results)
+
+	log.Println(results)
 	if err != nil {
 		log.Error(err)
 		if err.Error() == "mongo: no documents in result" {
@@ -97,30 +90,11 @@ CREATE:
 		log.Error(err)
 		return nil, errors.New("status code:503 Service Unavailable")
 	}
-	some := primitive.NewObjectID()
-	log.Println("some   ", some)
-
-	// update := bson.D{
-	// 	{"$set", bson.D{
-	// 		{"fileid", fileId},
-	// 	}},
-	// }
 
 	password := string(passwordHash)
 
-	//bson.D{{"username", req.GetUserDetails().GetUsername()}, {"password", password}, {"fileid", some},}
-
-	user := &User{
-		Username: req.GetUserDetails().GetUsername(),
-		Password: password,
-		fileID:   some,
-	}
-	log.Println("new object id", user.fileID)
-
-	//id, err := collection.InsertOne(ctx, user)
-
 	id, err := collection.InsertOne(ctx, bson.D{
-		{"username", req.GetUserDetails().GetUsername()}, {"password", password}, {"fileid", some},
+		{"username", req.GetUserDetails().GetUsername()}, {"password", password}, {"fileid", primitive.NilObjectID},
 	})
 
 	if err != nil {
@@ -141,36 +115,41 @@ func (f *fileServiceServer) DeleteUser(ctx context.Context, req *v1.DeleteUserRe
 		return nil, err
 	}
 
-	dbCol := f.db.Database(os.Getenv("FILE_SERVICE_DATABASE")).Collection(os.Getenv("FILE_SERVICE_COLLECTION"))
-
+	_, collection := getConn(f, "collection")
 	//verifying user
-	loginstatus, fileExists, err := loginAndFileExistsStatus(ctx, dbCol, req.GetUsername(), req.GetPassword())
+	_, fileID, err := getLoginStatusAndFileID(ctx, collection, req.GetUserDetails().GetUsername(), req.GetUserDetails().GetPassword())
 
-	if !loginstatus {
+	if err != nil && err.Error() != "file doesnt exists" {
 		return nil, err
 	}
 
-	// res, err := dbCol.DeleteOne(ctx, bson.M{"username": req.GetUsername})
-	// if err != nil {
-	// 	log.Error(err)
-	// 	return nil, err
-	// }
-	// log.Println(res)
+	res, err := collection.DeleteOne(ctx, bson.M{"username": req.GetUserDetails().GetUsername()})
 
-	if !fileExists {
-		goto END
-	} else {
+	if err != nil {
+		log.Error(err)
+		return nil, errors.New("failed to delete user  " + req.GetUserDetails().GetUsername())
+	}
+	log.Println("deleted result", res)
+
+	if fileID.IsZero() {
+		return &v1.DeleteUserResponse{
+			Message: "user" + req.GetUserDetails().GetUsername() + "deleted successfully",
+		}, nil
 
 	}
 
-END:
+	db, _ := getConn(f, "db")
+	bucket, err := gridfs.NewBucket(
+		db,
+	)
 
-	db := f.db.Database(os.Getenv("FILE_SERVICE_DATABASE"))
-
-	filefind(ctx, db)
+	if err := bucket.Delete(fileID); err != nil {
+		log.Error(err)
+		return nil, errors.New("failed to delete user " + req.GetUserDetails().GetUsername() + "files")
+	}
 
 	return &v1.DeleteUserResponse{
-		Message: "user" + req.GetUsername() + "deleted successfully",
+		Message: "user  " + req.GetUserDetails().GetUsername() + "deleted successfully",
 	}, nil
 
 }
@@ -184,29 +163,42 @@ func (f *fileServiceServer) UploadFile(stream v1.FileService_UploadFileServer) e
 			Code:    v1.UploadStatusCode_Failed,
 		})
 	}
+
 	usernames := md["username"]
 	passwords := md["password"]
-	// apVersions := md["apiVersion"]
+	apVersions := md["apiversion"]
 
-	// log.Println(apVersions)
-	// if err := f.checkAPI(apVersions[0]); err != nil {
-	// 	log.Error(err)
-	// 	return err
-	// }
-	_, collection := getConn(f, "collection")
-
-	//verifying user
-	loginstatus, fileExists, err := loginAndFileExistsStatus(stream.Context(), collection, usernames[0], passwords[0])
-
-	log.Println(loginstatus, fileExists)
-	//if !loginstatus || fileExists {
-	if true {
+	if err := f.checkAPI(apVersions[0]); err != nil {
+		log.Error(err)
 		return stream.SendAndClose(&v1.UploadStatus{
-			//	Message: "upload failed, " + err.Error(),
-			Code: v1.UploadStatusCode_Failed,
+			Message: "upload failed, " + err.Error(),
+			Code:    v1.UploadStatusCode_Failed,
 		})
 
 	}
+	_, collection := getConn(f, "collection")
+
+	//verifying user
+	_, fileIDReturned, err := getLoginStatusAndFileID(stream.Context(), collection, usernames[0], passwords[0])
+	fileID := primitive.NewObjectID()
+
+	if err != nil && err.Error() != "file doesnt exists" {
+
+		return stream.SendAndClose(&v1.UploadStatus{
+			Message: "upload failed, " + err.Error(),
+			Code:    v1.UploadStatusCode_Failed,
+		})
+
+	}
+
+	if !fileIDReturned.IsZero() {
+
+		return stream.SendAndClose(&v1.UploadStatus{
+			Message: "upload failed, File upload limit exceded ",
+			Code:    v1.UploadStatusCode_Failed,
+		})
+	}
+
 	db, _ := getConn(f, "db")
 	bucket, err := gridfs.NewBucket(
 		db,
@@ -216,9 +208,9 @@ func (f *fileServiceServer) UploadFile(stream v1.FileService_UploadFileServer) e
 		log.Println(err)
 		return errors.New("status code:503 Service Unavailable")
 	}
-	fileId := primitive.NewObjectID()
+
 	uploadStream, err := bucket.OpenUploadStreamWithID(
-		fileId,
+		fileID,
 		usernames[0],
 	)
 	if err != nil {
@@ -229,7 +221,7 @@ func (f *fileServiceServer) UploadFile(stream v1.FileService_UploadFileServer) e
 
 	for {
 
-		_, err := stream.Recv()
+		b, err := stream.Recv()
 
 		if err != nil {
 			if err == io.EOF {
@@ -239,12 +231,12 @@ func (f *fileServiceServer) UploadFile(stream v1.FileService_UploadFileServer) e
 
 		}
 
-		// fileSize, err := uploadStream.Write(b.GetContent())
-		// if err != nil {
-		// 	log.Println(err)
-		// 	return errors.New("status code:503 Service Unavailable")
-		// }
-		// log.Printf("Write file to DB was successful. File size: %d M\n", fileSize)
+		fileSize, err := uploadStream.Write(b.GetContent())
+		if err != nil {
+			log.Println(err)
+			return errors.New("status code:503 Service Unavailable")
+		}
+		log.Printf("Write file to DB was successful. File size: %d M\n", fileSize)
 
 	}
 
@@ -252,7 +244,7 @@ END:
 
 	update := bson.D{
 		{"$set", bson.D{
-			{"fileid", fileId},
+			{"fileid", fileID},
 		}},
 	}
 
@@ -275,19 +267,20 @@ func (f *fileServiceServer) DownloadFile(req *v1.DownloadFileRequest, stream v1.
 	if err := f.checkAPI(req.GetApi()); err != nil {
 		log.Error(err)
 		return err
+
 	}
 
-	dbCol := f.db.Database(os.Getenv("FILE_SERVICE_DATABASE")).Collection(os.Getenv("FILE_SERVICE_COLLECTION"))
+	_, collection := getConn(f, "collection")
 
 	//verifying user
-	loginstatus, fileExists, err := loginAndFileExistsStatus(stream.Context(), dbCol, req.GetUsername(), req.GetPassword())
+	_, fileID, err := getLoginStatusAndFileID(stream.Context(), collection, req.GetUserDetails().GetUsername(), req.GetUserDetails().GetPassword())
 
-	if !loginstatus || !fileExists {
+	if err != nil {
 		return err
 	}
-
+	db, _ := getConn(f, "db")
 	bucket, err := gridfs.NewBucket(
-		f.db.Database(os.Getenv("FILE_SERVICE_DATABASE")),
+		db,
 	)
 
 	if err != nil {
@@ -298,7 +291,8 @@ func (f *fileServiceServer) DownloadFile(req *v1.DownloadFileRequest, stream v1.
 
 	var buf bytes.Buffer
 	//	var buf []byte
-	dStream, err := bucket.DownloadToStreamByName(req.GetUsername(), &buf)
+	dStream, err := bucket.DownloadToStream(fileID, &buf)
+
 	if err != nil {
 		log.Println(err)
 		return errors.New("status code:503 Service Unavailable")
@@ -322,118 +316,47 @@ func (f *fileServiceServer) DownloadFile(req *v1.DownloadFileRequest, stream v1.
 
 }
 
-func loginAndFileExistsStatus(ctx context.Context, collection *mongo.Collection, username string, password string) (bool, bool, error) {
+func getLoginStatusAndFileID(ctx context.Context, collection *mongo.Collection, username string, password string) (bool, primitive.ObjectID, error) {
 
 	var results bson.M
-	// err := fsFiles.FindOne(mongoCtx, bson.M{}).Decode(&results)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	return false
-	// }
-	//var user User
+
 	err := collection.FindOne(ctx, bson.D{{"username", username}}).Decode(&results)
 	if err != nil {
 		log.Error(err)
 		if err.Error() == "mongo: no documents in result" {
-			return false, false, errors.New("user doesnt exists")
+			return false, primitive.NilObjectID, errors.New("user doesnt exists")
 		}
+
+		return false, primitive.NilObjectID, errors.New("sevice unavailable")
 
 	}
 
-	//type a interface {}
-	var c primitive.ObjectID
-	// func(a  interface{}){
-	// 	c =reflect.ValueOf(a)
-	// }
-
-	//var a bson.PrimitiveCodecs
-	//results.
+	var fileID primitive.ObjectID
+	var userPassword string
 
 	for i, v := range results {
 
 		if i == "fileid" {
 
-			a := reflect.ValueOf(v)
-			log.Printf("inde"+i+"value %T", v)
-			log.Println(a, "pritin value of a")
-			s := v.(primitive.ObjectID)
-			log.Println(v.(primitive.ObjectID), "pritin value of a")
+			fileID = v.(primitive.ObjectID)
 
-			log.Println(s, "Printing s")
-			log.Println(s.IsZero(), "Printing zero")
-			log.Println(c.IsZero(), "c  Printing zero")
+		}
+		if i == "password" {
+			userPassword = v.(string)
 		}
 
 	}
 
-	log.Println(c)
+	err1 := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(password))
 
-	// err1 := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-
-	// if err1 != nil {
-	// 	log.Error(err1)
-	// 	return false, false, errors.New("invalid credentials")
-	// }
-
-	// log.Println("printing file size", user.fileID.IsZero())
-
-	// log.Println(user.fileID.MarshalJSON())
-
-	// log.Println(user)
-
-	// if !user.fileID.IsZero() {
-
-	// 	return true, true, errors.New("file upload limit exceded")
-	// }
-
-	return true, false, nil
-}
-
-func filefind(ctx context.Context, db *mongo.Database) {
-
-	bucket, err := gridfs.NewBucket(
-		db,
-	)
-	if err != nil {
-
-		log.Println(err)
-
+	if err1 != nil {
+		log.Error(err1)
+		return false, primitive.NilObjectID, errors.New("invalid credentials")
 	}
 
-	log.Println("i am in find")
-
-	filter := bson.D{
-		{"length", bson.D{{"$gt", 100}}},
-	}
-	cursor, err := bucket.Find(filter)
-
-	defer func() {
-		if err := cursor.Close(context.TODO()); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	type gridfsFile struct {
-		Name   string `bson:"filename"`
-		Length int64  `bson:"length"`
-
-		ID primitive.ObjectID `bson:"_id"`
-	}
-	var foundFiles []gridfsFile
-	if err = cursor.All(context.TODO(), &foundFiles); err != nil {
-		log.Fatal(err)
+	if fileID.IsZero() {
+		return true, fileID, errors.New("file doesnt exists")
 	}
 
-	log.Println("printing files", foundFiles)
-	for _, file := range foundFiles {
-		fmt.Printf("filename: %s, length: %d\n", file.Name, file.Length, file.ID)
-
-		if err := bucket.Delete(file.ID); err != nil {
-			log.Fatal(err)
-		}
-
-		log.Println("successfully deleted files")
-
-	}
-
+	return true, fileID, nil
 }
