@@ -15,7 +15,7 @@ clean:
 	@$(GOCLEAN)
 	@rm -f $(BINARY_NAME)
 
-run:github.com/sajanjswl/file-service
+run:
 	@echo "starting the server..."
 	@$(GOBUILD) -i -v -o $(BINARY_NAME) $(PATH_TO_SERVER_MAIN)
 	@./$(BINARY_NAME) --$(PARAMETES_TO_SERVER)

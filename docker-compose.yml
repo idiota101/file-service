@@ -1,0 +1,21 @@
+version: '3.1'
+
+
+volumes:
+  mongoData:
+
+networks:
+  mongo_net:
+    
+
+services:
+  greet:
+    build: .
+    container_name: greet
+    restart: always
+
+ 
+    networks:
+      - mongo_net
+    ports:
+      - 8080:8080
